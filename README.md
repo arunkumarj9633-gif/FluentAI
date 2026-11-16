@@ -174,12 +174,13 @@ This project represents our collaborative effort as a team.
 
 ## 📸 Project Screenshots
 
-### Homepage
+### 1. Homepage
 ![FluentAI Homepage](screenshots/homepage.png)
 
-### AI Tutor
+### 2. AI Tutor
 ![FluentAI AI Tutor](screenshots/ai-tutor.png)
 
-### Practice Session
-![FluentAI Practice Session](screenshots/practice-session.png)
+### 3. Login Page
+![FluentAI Login Page](screenshots/loginpage.png)
+
 
