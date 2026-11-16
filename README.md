@@ -157,3 +157,17 @@ The test suite covers account verification and recovery, CSRF, rate limits, gues
 The app now has production-oriented settings, PostgreSQL support, HTTPS cookie and redirect defaults, collected static assets, shared throttling, guest-session ownership, email verification, password recovery, logging, and a Docker/Gunicorn deployment path.
 
 It still needs a real deployment environment and a final launch review. Configure valid PostgreSQL, SMTP, Groq, domain, and proxy credentials; verify HTTPS and email delivery; replace the placeholder Privacy Policy and Terms links with owner-reviewed content; and run browser, load, and backup-restore checks on the chosen host. `check --deploy` can also report HSTS subdomain and preload warnings; enable those only after confirming your domain and every affected subdomain meet the HTTPS requirements.
+
+
+## 👥 Project Team
+
+This project was collaboratively developed by:
+
+- **Arun Kumar**
+- **Aneesh Kumar V**
+- **Arun Babu**
+
+All three members worked together on the planning, development, implementation, and completion of FluentAI.
+
+This project represents our collaborative effort as a team.
+
