@@ -171,3 +171,15 @@ All three members worked together on the planning, development, implementation, 
 
 This project represents our collaborative effort as a team.
 
+
+## 📸 Project Screenshots
+
+### Homepage
+![FluentAI Homepage](screenshots/homepage.png)
+
+### AI Tutor
+![FluentAI AI Tutor](screenshots/ai-tutor.png)
+
+### Practice Session
+![FluentAI Practice Session](screenshots/practice-session.png)
+
