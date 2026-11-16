@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - FluentAI</title>
+    <link rel="icon" href="{% static 'images/logo-icon.jpg' %}" type="image/jpeg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+
+    <style>
+        .auth-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .auth-error.show {
+            display: flex;
+        }
+
+        .auth-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .auth-success.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-primary);
+        }
+
+        .input-label {
+            display: block;
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-2);
+            color: var(--text-secondary);
+        }
+
+        .auth-social-btn {
+            transition: all 0.2s ease;
+        }
+
+        .auth-social-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .input:focus {
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .input.error {
+            border-color: rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .password-strength {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease, background 0.3s ease;
+            width: 0%;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/redesign.css' %}">
+</head>
+
+<body>
+    <div class="auth-layout">
+        <div class="glass-card auth-card animate-scale-in">
+            <div class="auth-header">
+                <a href="index.html" class="auth-logo">
+                    <div class="nav-logo-icon"><img src="{% static 'images/logo.jpg' %}" alt="FluentAI"></div>
+                    <span class="nav-logo-text">Fluent<span>AI</span></span>
+                </a>
+                <h1 class="auth-title">Create your account</h1>
+                <p class="auth-subtitle">Start your English learning journey today</p>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div class="auth-error" id="authError">
+                <span></span>
+                <span id="errorText">Something went wrong</span>
+            </div>
+            <div class="auth-success" id="authSuccess">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span id="successText">Account created!</span>
+            </div>
+            <!-- Email Form -->
+            <form class="auth-form" id="signupForm" novalidate>
+                <div>
+                    <label class="input-label" for="name">Full Name</label>
+                    <input type="text" class="input" placeholder="John Doe" required id="name" autocomplete="name">
+                </div>
+
+                <div>
+                    <label class="input-label" for="email">Email</label>
+                    <input type="email" class="input" placeholder="you@example.com" required id="email"
+                        autocomplete="email">
+                </div>
+
+                <div>
+                    <label class="input-label" for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" class="input" placeholder="••••••••" required id="password" minlength="8"
+                            autocomplete="new-password">
+                        <button type="button" class="password-toggle" id="passToggle" title="Show password"></button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-fill" id="passwordStrength"></div>
+                    </div>
+                    <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-1);"
+                        id="passwordHint">At least 8 characters</p>
+                </div>
+
+                <div style="display: flex; align-items: flex-start; gap: var(--space-3); margin-top: var(--space-2);">
+                    <input type="checkbox" id="terms" required style="margin-top: 4px; accent-color: #6366F1;">
+                    <label for="terms" style="font-size: var(--text-sm); color: var(--text-muted);">
+                        I agree to the <a href="#" style="color: var(--accent-primary);">Terms of Service</a> and <a
+                            href="#" style="color: var(--accent-primary);">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" id="signupBtn"
+                    style="width: 100%; margin-top: var(--space-4);">
+                    Create Account
+                </button>
+            </form>
+
+            <div id="resendVerificationWrap" hidden style="text-align:center; margin-top:var(--space-3);">
+                <button type="button" class="btn btn-ghost" id="resendVerification">Resend verification email</button>
+            </div>
+
+            <div class="auth-footer">
+                <p style="color: var(--text-muted);">
+                    Already have an account? <a href="login.html">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/api.js' %}"></script>
+    <script src="{% static 'js/auth.js' %}"></script>
+</body>
+
+</html>

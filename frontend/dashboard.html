@@ -1,0 +1,510 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FluentAI</title>
+    <link rel="icon" href="{% static 'images/logo-icon.jpg' %}" type="image/jpeg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+
+    <style>
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: var(--space-4);
+        }
+
+        .stat-card-icon.purple {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818CF8;
+        }
+
+        .stat-card-icon.blue {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .stat-card-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .stat-card-icon.orange {
+            background: rgba(200, 136, 107, 0.2);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-base);
+        }
+
+        .activity-item:hover {
+            background: var(--glass-bg);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            font-size: 1.25rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: var(--font-medium);
+            margin-bottom: var(--space-1);
+        }
+
+        .activity-time {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        .goal-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-3) 0;
+        }
+
+        .goal-info {
+            flex: 1;
+        }
+
+        .goal-label {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-2);
+        }
+
+        .goal-value {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+        }
+
+        .streak-flame {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+        }
+
+        @media (max-width: 768px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        .recording-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.2s;
+        }
+
+        .recording-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .recording-item.playing {
+            border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .rec-play-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gradient-primary);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s;
+        }
+
+        .rec-play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .rec-delete-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .rec-delete-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/redesign.css' %}">
+</head>
+
+<body>
+    <div class="page">
+        <!-- Navigation -->
+        <nav class="nav" id="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-logo">
+                    <div class="nav-logo-icon"><img src="{% static 'images/logo.jpg' %}" alt="F" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div>
+                    <span class="nav-logo-text">Fluent<span>AI</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                    <a href="practice.html" class="nav-link">Practice</a>
+                    <a href="challenges.html" class="nav-link">Challenges</a>
+                    <a href="writing.html" class="nav-link">Writing</a>
+                </div>
+
+                <div class="nav-actions">
+                    <div class="nav-user" id="navUser">
+                        <div class="nav-user-info">
+                            <div class="nav-user-name" id="userName">Loading...</div>
+                            <div class="nav-user-email" id="userEmail"></div>
+                        </div>
+                        <div class="avatar" id="userAvatar">?</div>
+                    </div>
+                </div>
+
+                <button class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="page-content">
+            <div class="container dashboard">
+                <!-- Dashboard Header -->
+                <div class="dashboard-header animate-fade-in-down">
+                    <div class="dashboard-welcome">
+                        <h1>Welcome back, <span id="welcomeName" class="text-gradient">Learner</span></h1>
+                        <p>Let's continue your English learning journey.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-4);">
+                        <div class="streak-flame" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--radius-full); font-weight: 600;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                            <span id="streakCount">0</span>
+                            <span style="font-size: var(--text-sm); font-weight: normal; color: var(--text-muted);">day streak</span>
+                        </div>
+                        <div class="level-badge" id="levelBadge" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--radius-full); font-weight: 600; font-size: var(--text-sm);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Beginner
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="dashboard-stats stagger">
+                    <div class="glass-card stat-card animate-fade-in-up">
+                        <div class="stat-card-icon icon-box-indigo" style="width: 48px; height: 48px; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        </div>
+                        <div class="stat-value" id="statWords">0</div>
+                        <div class="stat-label">Words Spoken</div>
+                    </div>
+
+                    <div class="glass-card stat-card animate-fade-in-up">
+                        <div class="stat-card-icon icon-box-blue" style="width: 48px; height: 48px; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <div class="stat-value" id="statSessions">0</div>
+                        <div class="stat-label">Sessions Completed</div>
+                    </div>
+
+                    <div class="glass-card stat-card animate-fade-in-up">
+                        <div class="stat-card-icon icon-box-teal" style="width: 48px; height: 48px; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-value" id="statMinutes">0</div>
+                        <div class="stat-label">Minutes Practiced</div>
+                    </div>
+
+                    <div class="glass-card stat-card animate-fade-in-up">
+                        <div class="stat-card-icon icon-box-gold" style="width: 48px; height: 48px; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        </div>
+                        <div class="stat-value" id="statXP">0</div>
+                        <div class="stat-label">XP Earned</div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left Column -->
+                    <div style="display: flex; flex-direction: column; gap: var(--space-6);">
+                        <!-- Quick Actions -->
+                        <div class="glass-card-static" style="padding: var(--space-6);">
+                            <h3 style="margin-bottom: var(--space-6);">Quick Actions</h3>
+                            <div class="quick-actions" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4);">
+                                <a href="practice.html" class="glass-card action-card">
+                                    <div class="action-card-icon icon-box-indigo">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                                    </div>
+                                    <div class="action-card-content">
+                                        <div class="action-card-title">Speaking Practice</div>
+                                        <div class="action-card-subtitle">Practice conversation with AI</div>
+                                    </div>
+                                    <span class="action-card-arrow">→</span>
+                                </a>
+
+                                <a href="writing.html" class="glass-card action-card">
+                                    <div class="action-card-icon icon-box-teal">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="M15 5l4 4"/></svg>
+                                    </div>
+                                    <div class="action-card-content">
+                                        <div class="action-card-title">Writing Test</div>
+                                        <div class="action-card-subtitle">Improve your writing skills</div>
+                                    </div>
+                                    <span class="action-card-arrow">→</span>
+                                </a>
+
+                                <a href="challenges.html" class="glass-card action-card">
+                                    <div class="action-card-icon icon-box-gold">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                    </div>
+                                    <div class="action-card-content">
+                                        <div class="action-card-title">Daily Challenge</div>
+                                        <div class="action-card-subtitle">Earn bonus XP today</div>
+                                    </div>
+                                    <span class="action-card-arrow">→</span>
+                                </a>
+
+                                <a href="profile.html" class="glass-card action-card">
+                                    <div class="action-card-icon icon-box-purple">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                    <div class="action-card-content">
+                                        <div class="action-card-title">My Profile</div>
+                                        <div class="action-card-subtitle">View achievements & settings</div>
+                                    </div>
+                                    <span class="action-card-arrow">→</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="glass-card-static" style="padding: var(--space-6);">
+                            <h3 style="margin-bottom: var(--space-4);">Recent Activity</h3>
+                            <div id="activityList">
+                                <div class="activity-item">
+                                    <div class="activity-icon icon-box-indigo" style="width: 40px; height: 40px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Speaking Practice</div>
+                                        <div class="activity-time">Start your first session!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session Recordings -->
+                        <div class="glass-card-static" style="padding: var(--space-6);">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                                <h3> Session Recordings</h3>
+                                <span style="font-size:12px; color:var(--text-muted);" id="sessionCount">0
+                                    sessions</span>
+                            </div>
+
+                            <!-- Sessions List -->
+                            <div id="sessionsList"
+                                style="display:flex; flex-direction:column; gap:10px; max-height:500px; overflow-y:auto;">
+                                <div
+                                    style="text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">
+                                    No session recordings yet. Complete a practice session to see it here!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div style="display: flex; flex-direction: column; gap: var(--space-6);">
+                        <!-- Weekly Goals -->
+                        <div class="glass-card-static" style="padding: var(--space-6);">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+                                <h3>Weekly Goals</h3>
+                                <span class="badge badge-primary" id="weeklyGoalBadge">0/4 Complete</span>
+                            </div>
+
+                            <div class="goal-item">
+                                <div class="goal-info">
+                                    <div class="goal-label">Practice 5 times</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-bar-fill" style="width: 60%;"></div>
+                                    </div>
+                                    <div class="goal-value">3/5 sessions</div>
+                                </div>
+                            </div>
+
+                            <div class="goal-item">
+                                <div class="goal-info">
+                                    <div class="goal-label">Speak 500 words</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-bar-fill" style="width: 40%;"></div>
+                                    </div>
+                                    <div class="goal-value">200/500 words</div>
+                                </div>
+                            </div>
+
+                            <div class="goal-item">
+                                <div class="goal-info">
+                                    <div class="goal-label">Complete a writing test</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-bar-fill" style="width: 0%;"></div>
+                                    </div>
+                                    <div class="goal-value">0/1 tests</div>
+                                </div>
+                            </div>
+
+                            <div class="goal-item">
+                                <div class="goal-info">
+                                    <div class="goal-label">Finish a challenge</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-bar-fill"
+                                            style="width: 100%; background: var(--gradient-success);"></div>
+                                    </div>
+                                    <div class="goal-value">✓ Complete!</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Achievements -->
+                        <div class="glass-card-static" style="padding: var(--space-6);">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+                                <h3>Achievements</h3>
+                                <a href="profile.html"
+                                    style="font-size: var(--text-sm); color: var(--accent-primary);">View All →</a>
+                            </div>
+
+                            <div style="display: flex; gap: var(--space-4); flex-wrap: wrap;">
+                                <div class="glass-card"
+                                    style="padding: var(--space-4); text-align: center; flex: 1; min-width: 100px;">
+                                    <div style="font-size: 1.5rem; margin-bottom: var(--space-2); color: #38BDF8; display: flex; justify-content: center;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--text-muted); font-weight: 500;">First Steps</div>
+                                </div>
+                                <div class="glass-card"
+                                    style="padding: var(--space-4); text-align: center; flex: 1; min-width: 100px;">
+                                    <div style="font-size: 1.5rem; margin-bottom: var(--space-2); color: var(--accent-secondary); display: flex; justify-content: center;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--text-muted); font-weight: 500;">3-Day Streak</div>
+                                </div>
+                                <div class="glass-card"
+                                    style="padding: var(--space-4); text-align: center; flex: 1; min-width: 100px; opacity: 0.5;">
+                                    <div style="font-size: 1.5rem; margin-bottom: var(--space-2); color: var(--text-muted); display: flex; justify-content: center;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--text-muted); font-weight: 500;">Mastery</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tip of the Day -->
+                        <div class="glass-card"
+                            style="padding: var(--space-6); background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.25);">
+                            <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
+                                <div style="color: #818CF8; margin-top: 2px;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+                                </div>
+                                <div>
+                                    <h4 style="margin-bottom: var(--space-2); color: var(--text-primary);">Tip of the Day</h4>
+                                    <p
+                                        style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.7;">
+                                        Practice speaking out loud, even when you're alone. This helps build confidence
+                                        and improves your pronunciation naturally.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/api.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/navigation.js' %}"></script>
+</body>
+
+</html>
